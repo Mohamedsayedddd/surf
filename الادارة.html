@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة القائمة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffcc00;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #000;
+            color: #ffcc00;
+        }
+
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-section {
+            margin-bottom: 20px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .admin-section h2 {
+            margin-bottom: 10px;
+            color: #ffcc00;
+        }
+
+        .admin-section input,
+        .admin-section textarea,
+        .admin-section select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background-color: #1e1e1e;
+            color: #ffcc00;
+        }
+
+        .admin-section button {
+            background-color: #ffcc00;
+            color: #1e1e1e;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .admin-section button:hover {
+            background-color: #e6b800;
+        }
+
+        .admin-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .admin-section table th,
+        .admin-section table td {
+            padding: 10px;
+            border: 1px solid #555;
+            text-align: center;
+        }
+
+        .admin-section table th {
+            background-color: #444;
+            color: #ffcc00;
+        }
+
+        .admin-section table td {
+            background-color: #1e1e1e;
+        }
+
+        .admin-section table td button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #ffcc00;
+            color: #1e1e1e;
+            transition: background-color 0.3s;
+        }
+
+        .admin-section table td button:hover {
+            background-color: #e6b800;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: #1e1e1e;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 500px;
+            color: #ffcc00;
+        }
+
+        .close-modal {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: #e6b800;
+        }
+
+        /* تجاوبية لشاشات الهواتف */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 10px;
+            }
+
+            .admin-section {
+                padding: 15px;
+            }
+
+            .admin-section table th,
+            .admin-section table td {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .admin-section table td button {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .admin-section input,
+            .admin-section textarea,
+            .admin-section select {
+                padding: 8px;
+                font-size: 14px;
+            }
+
+            .admin-section button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-section table th,
+            .admin-section table td {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .admin-section table td button {
+                padding: 3px 6px;
+                font-size: 10px;
+            }
+
+            .admin-section input,
+            .admin-section textarea,
+            .admin-section select {
+                padding: 6px;
+                font-size: 12px;
+            }
+
+            .admin-section button {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>إدارة القائمة</h1>
+    </header>
+
+    <div class="admin-container">
+        <!-- إضافة قسم جديد -->
+        <div class="admin-section">
+            <h2>إضافة قسم جديد</h2>
+            <input type="text" id="newCategoryName" placeholder="اسم القسم">
+            <select id="newCategoryType">
+                <option value="food">Food</option>
+                <option value="drink">Drink</option>
+                <option value="dessert">Dessert</option>
+            </select>
+            <input type="file" id="newCategoryImage" accept="image/*">
+            <button onclick="addCategory()">إضافة قسم</button>
+        </div>
+
+        <!-- إضافة منتج جديد -->
+        <div class="admin-section">
+            <h2>إضافة منتج جديد</h2>
+            <select id="categorySelect">
+                <!-- سيتم ملء هذا القائمة بالأقسام الموجودة -->
+            </select>
+            <input type="text" id="newProductName" placeholder="اسم المنتج">
+            <input type="number" id="newProductPrice" placeholder="السعر">
+            <input type="number" id="newProductDiscount" placeholder="الخصم (اختياري)">
+            <input type="file" id="newProductImage" accept="image/*">
+            <textarea id="newProductDescription" placeholder="وصف المنتج"></textarea>
+            <button onclick="addProduct()">إضافة منتج</button>
+        </div>
+
+        <!-- عرض الأقسام والمنتجات -->
+        <div class="admin-section">
+            <h2>الأقسام والمنتجات</h2>
+            <table id="categoriesTable">
+                <thead>
+                    <tr>
+                        <th>اسم القسم</th>
+                        <th>النوع</th>
+                        <th>المنتجات</th>
+                        <th>التعديل علي القسم</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- سيتم ملء هذا الجدول بالأقسام والمنتجات -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- نافذة التعديل -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeEditModal()">&times;</span>
+            <h2>تعديل المنتج</h2>
+            <input type="text" id="editProductName" placeholder="اسم المنتج">
+            <input type="number" id="editProductPrice" placeholder="السعر">
+            <input type="number" id="editProductDiscount" placeholder="الخصم (اختياري)">
+            <textarea id="editProductDescription" placeholder="وصف المنتج"></textarea>
+            <input type="file" id="editProductImage" accept="image/*">
+            <button onclick="saveProductChanges()">حفظ التغييرات</button>
+        </div>
+    </div>
+    <a href="الرئيسية.html"><button>home</button></a>
+
+    <script>
+        let categories = [];
+        let currentCategoryIndex = null;
+        let currentProductIndex = null;
+
+        // تحميل الأقسام والمنتجات من localStorage إذا كانت موجودة
+        if (localStorage.getItem('categories')) {
+            categories = JSON.parse(localStorage.getItem('categories'));
+            updateCategorySelect();
+            updateCategoriesTable();
+        }
+
+        function addCategory() {
+            const categoryName = document.getElementById('newCategoryName').value;
+            const categoryType = document.getElementById('newCategoryType').value;
+            const categoryImage = document.getElementById('newCategoryImage').files[0];
+
+            if (categoryName && categoryImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newCategory = {
+                        name: categoryName,
+                        type: categoryType,
+                        image: e.target.result,
+                        products: []
+                    };
+                    categories.push(newCategory);
+                    localStorage.setItem('categories', JSON.stringify(categories));
+                    console.log("تمت إضافة قسم جديد:", newCategory); // تحقق من البيانات
+                    updateCategorySelect();
+                    updateCategoriesTable();
+                    document.getElementById('newCategoryName').value = '';
+                    document.getElementById('newCategoryImage').value = '';
+                };
+                reader.readAsDataURL(categoryImage);
+            } else {
+                alert('يرجى ملء جميع الحقول');
+            }
+        }
+
+        function addProduct() {
+            const categoryIndex = document.getElementById('categorySelect').selectedIndex;
+            const productName = document.getElementById('newProductName').value;
+            const productPrice = document.getElementById('newProductPrice').value;
+            const productDiscount = document.getElementById('newProductDiscount').value;
+            const productImage = document.getElementById('newProductImage').files[0];
+            const productDescription = document.getElementById('newProductDescription').value;
+
+            if (categoryIndex !== -1 && productName && productPrice && productImage && productDescription) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const newProduct = {
+                        name: productName,
+                        price: productPrice,
+                        discount: productDiscount || 0,
+                        image: e.target.result,
+                        description: productDescription
+                    };
+                    categories[categoryIndex].products.push(newProduct);
+                    localStorage.setItem('categories', JSON.stringify(categories));
+                    console.log("تمت إضافة منتج جديد:", newProduct); // تحقق من البيانات
+                    updateCategoriesTable();
+                    document.getElementById('newProductName').value = '';
+                    document.getElementById('newProductPrice').value = '';
+                    document.getElementById('newProductDiscount').value = '';
+                    document.getElementById('newProductImage').value = '';
+                    document.getElementById('newProductDescription').value = '';
+                };
+                reader.readAsDataURL(productImage);
+            } else {
+                alert('يرجى ملء جميع الحقول');
+            }
+        }
+
+        function updateCategorySelect() {
+            const categorySelect = document.getElementById('categorySelect');
+            categorySelect.innerHTML = '';
+            categories.forEach((category, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = category.name;
+                categorySelect.appendChild(option);
+            });
+        }
+
+        function updateCategoriesTable() {
+            const categoriesTable = document.getElementById('categoriesTable').getElementsByTagName('tbody')[0];
+            categoriesTable.innerHTML = '';
+            categories.forEach((category, categoryIndex) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${category.name}</td>
+                    <td>${category.type}</td>
+                    <td>
+                        <ul>
+                            ${category.products.map((product, productIndex) => `
+                                <li>
+                                    ${product.name} - ${product.price} جنيه
+                                    ${product.discount ? `(خصم: ${product.discount}%)` : ''}
+                                    <button onclick="editProduct(${categoryIndex}, ${productIndex})">تعديل</button>
+                                    <button onclick="deleteProduct(${categoryIndex}, ${productIndex})">حذف</button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </td>
+                    <td>
+                        <button onclick="editCategory(${categoryIndex})">تعديل</button>
+                        <button onclick="deleteCategory(${categoryIndex})">حذف</button>
+                    </td>
+                `;
+                categoriesTable.appendChild(row);
+            });
+        }
+
+        function editCategory(categoryIndex) {
+            const newName = prompt('أدخل الاسم الجديد للقسم:', categories[categoryIndex].name);
+            if (newName) {
+                categories[categoryIndex].name = newName;
+                localStorage.setItem('categories', JSON.stringify(categories));
+                updateCategorySelect();
+                updateCategoriesTable();
+            }
+        }
+
+        function deleteCategory(categoryIndex) {
+            if (confirm('هل أنت متأكد من حذف هذا القسم؟')) {
+                categories.splice(categoryIndex, 1);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                updateCategorySelect();
+                updateCategoriesTable();
+            }
+        }
+
+        function editProduct(categoryIndex, productIndex) {
+            currentCategoryIndex = categoryIndex;
+            currentProductIndex = productIndex;
+
+            const product = categories[categoryIndex].products[productIndex];
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductDiscount').value = product.discount || 0;
+            document.getElementById('editProductDescription').value = product.description;
+
+            document.getElementById('editModal').style.display = 'block';
+            console.log("تم فتح نافذة التعديل للمنتج:", product); // تحقق من المنتج
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            console.log("تم إغلاق نافذة التعديل"); // تحقق من إغلاق النافذة
+        }
+
+        function saveProductChanges() {
+            const product = categories[currentCategoryIndex].products[currentProductIndex];
+            product.name = document.getElementById('editProductName').value;
+            product.price = document.getElementById('editProductPrice').value;
+            product.discount = document.getElementById('editProductDiscount').value || 0;
+            product.description = document.getElementById('editProductDescription').value;
+
+            const newImage = document.getElementById('editProductImage').files[0];
+            if (newImage) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    product.image = e.target.result;
+                    localStorage.setItem('categories', JSON.stringify(categories));
+                    updateCategoriesTable();
+                    closeEditModal();
+                };
+                reader.readAsDataURL(newImage);
+            } else {
+                localStorage.setItem('categories', JSON.stringify(categories));
+                updateCategoriesTable();
+                closeEditModal();
+            }
+        }
+
+        function deleteProduct(categoryIndex, productIndex) {
+            if (confirm('هل أنت متأكد من حذف هذا المنتج؟')) {
+                categories[categoryIndex].products.splice(productIndex, 1);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                updateCategoriesTable();
+            }
+        }
+    </script>
+</body>
+</html>
