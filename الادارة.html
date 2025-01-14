@@ -202,12 +202,16 @@
         <!-- إضافة قسم جديد -->
         <div class="admin-section">
             <h2>إضافة قسم جديد</h2>
-            <input type="text" id="newCategoryName" placeholder="اختر اسم القسم الرئيسي ">
+
             <select id="newCategoryType">
+                <option> value="">اختر القسم الرئيسي</option>
                 <option value="food">Food</option>
                 <option value="drink">Drink</option>
                 <option value="dessert">Dessert</option>
             </select>
+            
+            <input type="text" id="newCategoryName" placeholder="اكتب اسم القسم  ">
+            
             <input type="file" id="newCategoryImage" accept="image/*">
             <button onclick="addCategory()">إضافة قسم</button>
         </div>
